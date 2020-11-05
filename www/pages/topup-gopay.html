@@ -1,0 +1,217 @@
+<template>
+  <div class="page" data-name="gopay">
+    <div class="navbar no-shadow">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+          </a>
+        </div>
+        <div class="title">Topup GOPAY</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block" style="margin: 32px 0 0;">
+        <form class="trxtopup form-ajax-submit">
+          <input type="hidden" id="kode" name="kode" />
+          <div class="list no-hairlines-md">
+            <ul>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Nomor HP Tujuan</div>
+                    <div class="row no-gutter">
+                      <div class="col-85">
+                        <div class="item-input-wrap">
+                          <input type="number" id="tujuan" name="tujuan" placeholder="Nomor HP Tujuan" />
+                        </div>
+                      </div>
+                      <div class="col-15">
+                        <!-- <div class="item-input-wrap"> -->
+                          <a href="#" class="contact icon-only"><i class="material-icons">contact_phone</i></a>
+                        <!-- </div> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li class="lbl-pilih">
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Pilih Produk</div>
+                  </div>
+                </div>
+              </li>
+              <li class="item-process">
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Nominal</div>
+                    <div class="item-input">
+                      <!-- <select id="nominal" name="kode">
+                        <option value="GOP25">25.000</option>
+                        <option value="GOP50">50.000</option>
+                        <option value="GOP100">100.000</option>
+                        <option value="GOP150">150.000</option>
+                        <option value="GOP200">200.000</option>
+                      </select> -->
+                      <input type="text" id="nama" readonly/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li class="item-process">
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Nomor PIN/Password</div>
+                    <div class="item-input-wrap">
+                      <input type="password" id="pin" name="pin" placeholder="Nomor PIN/Password" />
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="content-block item-process"><a href="#" class="button button-raised button-fill larger btnKirim">Kirim</a></div>
+        </form>
+      </div>
+      <div class="block data-pulsa" style="overflow: overlay; margin: 0 0 32px;">
+        <div class="list media-list virtual-list list-data">
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Page Events
+    on: {
+      
+      pageInit: function(e, page) {
+        
+        function updateList() {
+          app.request.json( app.data.endpoint + 'api/v1/topup/GOP', function (json) {
+          // app.request.json( app.data.endpoint + 'topup/GOPAY', function (json) {
+
+            // $$('#nominal').html('');
+            // for (var i = 0; i < json.length; i++) {
+            //   $$('#nominal').append('<option value="'+json[i].kode+'">'+json[i].nama+'</option>')
+            // }
+    
+            var virtualList = app.virtualList.create({
+              // List Element
+              el: '.list-data',
+              // Pass array with items
+              items: json,
+              // List item Template7 template
+              itemTemplate:
+                '<li>' +
+                  '<a href="#" item-code="{{kode}}" item-name="{{nama}}" class="item-link item-content">' +
+                    '<div class="item-media"><img src="img/gopay.png" width="42" /></div>' +
+                    '<div class="item-inner">' +
+                      '<div class="item-title menu">' +
+                        '<div class="item-title">{{nama}}</div>' +
+                      '</div>' +
+                      '<div class="item-text product-price">Rp {{hjual}}</div>' +
+                    '</div>' +
+                  '</a>' +
+                '</li>',
+              // Item height
+              //height: app.theme === 'ios' ? 63 : 73,
+            });
+            
+            //  640 - 56 - 129 - 32
+            $$($$('.data-pulsa').find('ul')[0]).css('height','391px');
+            $$('.data-pulsa').css('display', 'block');
+            $$('.lbl-pilih').css('display', 'block');
+          });
+        }
+
+        updateList();
+
+        $$('.contact').on('click', function(e){
+     
+          navigator.contacts.pickContact(function(contact){
+            var nomor = contact.phoneNumbers[0].value;
+            $$('#tujuan').val(nomor.replace('+62','0').replace(/-/g,'').replace(/ /g,''));
+            var str = $$('#tujuan').val().substring(0, 4);
+            updateList(str);
+          },function(err){
+            $$('#tujuan').val('');
+          });
+        });
+
+        $$('.data-pulsa').on('click', 'a', function (e) {
+          var kode  = $$(this).attr('item-code');
+          var name  = $$(this).attr('item-name');
+
+          $$('#kode').val(kode);
+          $$('#nama').val(name);
+          $$('.lbl-pilih').css('display', 'none');
+          $$('.data-pulsa').css('display', 'none');
+          $$('.item-process').css('display', 'block');
+        });
+
+        $$('#nama').on('click', function(e){
+          $$('.item-process').css('display', 'none');
+          $$('.data-pulsa').css('display', 'block');
+          $$('.lbl-pilih').css('display', 'block');
+        });
+      
+        $$('.btnKirim').on('click', function(e){
+          //e.preventDefault();
+          
+          var tujuan = $$('#tujuan').val();
+          if (tujuan == '') {
+              app.dialog.alert('Masukkan data nomor hp tujuan.', 'Topup GOPAY');
+              return;
+          }
+
+          var rgx_nohp = /[08][0-9]{9,}/;
+          var nohp = tujuan.trim().match(rgx_nohp);
+          if (!nohp) {
+              app.dialog.alert('Input data nomor hp tujuan belum benar.', 'Topup GOPAY');
+              return;
+          }
+
+          var kode = $$('#nominal').val();
+          if (kode == '') {
+              app.dialog.alert('Pilih nominal topup.', 'Topup GOPAY');
+              return;
+          }
+          
+          // if (app.data.saldo == 0) {
+          //   app.dialog.alert('Saldo anda tidak cukup untuk melakukan transaksi topup GOPAY.', 'Topup GOPAY');
+          //   return;
+          // }
+            
+          var pin = $$('#pin').val();
+          if (pin == '') {
+            app.dialog.alert('Masukkan nomor PIN atau password anda.', 'Topup GOPAY');
+            return;
+          }
+
+          // app.preloader.show();
+          $$(this).prop("disabled", true);
+
+          var formData = app.form.convertToData('.trxtopup');
+          
+          app.request.post( app.data.endpoint + 'api/v1/topup', formData, function (res) {
+            
+            var data = JSON.parse(res);
+
+            if (data.status) {
+              app.router.back();
+            } else {
+
+              $$(this).prop("disabled", false);
+              if (data.message !== '') {
+                app.dialog.alert(data.message, 'Topup GOPAY');
+              }
+            }
+          });
+        });
+      }
+    }
+  }
+</script>

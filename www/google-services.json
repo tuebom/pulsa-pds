@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "106377939745",
+    "firebase_url": "https://koperasi-pds.firebaseio.com",
+    "project_id": "koperasi-pds",
+    "storage_bucket": "koperasi-pds.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106377939745:android:30eab89fd37386e07a8c60",
+        "android_client_info": {
+          "package_name": "com.app.kop.pds"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106377939745-8kusg1s6fhpp2e0ipec84ta9a72jiq8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyGBAY23WkTqRPvNjphuRGOIkrHEybgm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106377939745-8kusg1s6fhpp2e0ipec84ta9a72jiq8t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
